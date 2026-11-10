@@ -102,7 +102,7 @@ Ide proyek **berasal dari mahasiswa** dan harus selaras dengan **salah satu** da
 | **Indikator kontribusi** | Bagaimana hasil model berkontribusi pada target SDG (langsung/tidak langsung)? | **Kontribusi Langsung**: Meningkatkan efisiensi pemantauan infrastruktur jalan dengan mempercepat waktu identifikasi titik rawan rusak, sehingga jadwal pemeliharaan preventif dan korektif dapat dilakukan lebih dini sebelum kerusakan meluas.<br>**Kontribusi Tidak Langsung**: Menurunkan angka kecelakaan lalu lintas akibat jalan berlubang, memperlancar konektivitas transportasi logistik lokal, dan mengoptimalkan efisiensi penyerapan anggaran perbaikan infrastruktur publik.      |
 | **Pertimbangan etika**   | Risiko bias, privasi, atau dampak salah prediksi?                              | 1. **Risiko Bias Data**: Model berpotensi kurang akurat mendeteksi lubang yang tergenang air hujan, tertutup bayangan pohon tebal, atau diambil pada malam hari jika variasi data latih tidak seimbang. Mitigasi: augmentasi data pada aspek pencahayaan, kontras, dan penambahan noise.<br>2. **Privasi Publik**: Rekaman citra jalan berpotensi memuat informasi sensitif seperti wajah pengendara/pejalan kaki dan plat nomor kendaraan. Mitigasi: memastikan dataset bersumber dari data terbuka (open license) dan menerapkan teknik masking/blurring otomatis pada area privasi sebelum citra diproses/dipublikasikan.<br>3. **Dampak Salah Prediksi**: False Negative (lubang berbahaya terlewat) berisiko fatal bagi keselamatan, sedangkan False Positive memboroskan alokasi sumber daya. Mitigasi: model diposisikan secara etis sebagai sistem pendukung keputusan (decision support), di mana verifikasi lapangan oleh pengawas teknis tetap menjadi tahapan validasi akhir sebelum eksekusi pekerjaan fisik.      |
 
-**Sumber ide:** [Jelaskan dari mana ide muncul: pengalaman pribadi, lingkungan sekitar, isu lokal/nasional, dll.]
+**Sumber ide:** [Ide proyek ini berasal dari permasalahan kondisi infrastruktur jalan yang masih sering kami ditemukan di lingkungan sekitar, khususnya adanya jalan berlubang yang dapat mengganggu kenyamanan dan keselamatan pengguna jalan. Proses identifikasi kerusakan jalan yang masih banyak dilakukan secara manual mendorong munculnya gagasan untuk memanfaatkan teknologi machine learning dan computer vision dalam mendeteksi jalan berlubang secara otomatis. Melalui proyek ini, hasil deteksi diharapkan dapat menjadi informasi pendukung dalam pemantauan kondisi jalan dan membantu menentukan prioritas perbaikan infrastruktur secara lebih efektif dan berbasis data.]
 
 ### 2.3 Ringkasan Alur Lifecycle Proyek
 
@@ -116,16 +116,11 @@ Jelaskan dalam 1 paragraf pendek bagaimana proyek Anda melewati tahap L → M �
 
 ### 3.1 Problem Statements
 
-Tuliskan 2–4 pernyataan masalah yang jelas dan spesifik.
+1. Identifikasi jalan berlubang masih banyak dilakukan melalui inspeksi manual sehingga membutuhkan waktu, biaya, dan sumber daya yang besar serta berpotensi menghasilkan penilaian yang tidak konsisten.
+2. Kondisi visual jalan yang bervariasi, seperti perbedaan ukuran dan bentuk lubang, tekstur permukaan jalan, pencahayaan, dan sudut pengambilan gambar, menjadi tantangan dalam melakukan deteksi lubang secara otomatis.
+3. Dibutuhkan model machine learning berbasis computer vision yang mampu mendeteksi keberadaan dan lokasi jalan berlubang pada sebuah citra secara otomatis melalui prediksi bounding box.
+4. Hasil deteksi jalan berlubang diharapkan dapat digunakan sebagai informasi pendukung untuk membantu proses pemantauan kondisi jalan dan menentukan prioritas perbaikan infrastruktur secara lebih cepat dan berbasis data.
 
-**Contoh (universal):**
-
-1. Model perlu mampu memprediksi nilai target dengan akurasi tinggi
-2. Sistem harus dapat mengidentifikasi pola pada citra secara otomatis
-3. Dataset memiliki noise sehingga perlu preprocessing yang tepat
-4. Dibutuhkan model deep learning yang mampu belajar representasi fitur kompleks
-
-**[Tulis problem statements Anda di sini]**
 
 ### 3.2 Formulasi Learning Problem (WAJIB)
 
@@ -133,9 +128,9 @@ Rumuskan masalah dalam kerangka _Learning Problem_:
 
 | Komponen      | Pertanyaan Panduan                                                                                          | Jawaban Anda |
 | ------------- | ----------------------------------------------------------------------------------------------------------- | ------------ |
-| **Target**    | Apa yang diprediksi? Jenis tugas (klasifikasi biner/multikelas, regresi, forecasting, clustering, dll.)?    | [ ... ]      |
-| **Objective** | Apa yang dioptimalkan/diminimalkan secara matematis (misal: cross-entropy, MSE)? Metrik keberhasilan utama? | [ ... ]      |
-| **Data**      | Sumber, ukuran, jenis, dan asumsi tentang data (i.i.d.? distribusi train vs test?)                          | [ ... ]      |
+| **Target**    | Apa yang diprediksi? Jenis tugas (klasifikasi biner/multikelas, regresi, forecasting, clustering, dll.)?    | [ Target dari proyek ini adalah mendeteksi keberadaan dan lokasi jalan berlubang (pothole) pada citra jalan. Masalah ini dirumuskan sebagai tugas object detection dengan satu kelas objek, yaitu pothole. Model diharapkan mampu memprediksi lokasi lubang dalam bentuk bounding box serta memberikan tingkat keyakinan terhadap hasil deteksi. ]      |
+| **Objective** | Apa yang dioptimalkan/diminimalkan secara matematis (misal: cross-entropy, MSE)? Metrik keberhasilan utama? | [ Objective utama adalah membangun model yang mampu mendeteksi jalan berlubang secara akurat dengan meminimalkan kesalahan prediksi selama proses pelatihan. Untuk model object detection, fungsi loss disesuaikan dengan model yang digunakan dan umumnya mencakup kesalahan klasifikasi serta kesalahan lokalisasi bounding box. Keberhasilan model akan dievaluasi menggunakan Precision, Recall, dan mean Average Precision (mAP). Precision digunakan untuk mengukur ketepatan deteksi, Recall digunakan untuk mengukur kemampuan menemukan lubang yang ada, sedangkan mAP digunakan sebagai metrik utama untuk mengevaluasi performa object detection secara keseluruhan. ]      |
+| **Data**      | Sumber, ukuran, jenis, dan asumsi tentang data (i.i.d.? distribusi train vs test?)                          | [ Data yang digunakan berasal dari Roboflow Universe Pothole Dataset yang berisi 665 citra jalan dengan anotasi lokasi jalan berlubang. Dataset memiliki satu kelas objek, yaitu pothole, dan digunakan untuk tugas object detection. Dataset telah dibagi dengan rasio 70% data training, 20% data validation, dan 10% data testing. Data training digunakan untuk melatih model, data validation digunakan dalam proses penyesuaian dan pemilihan model, sedangkan data testing digunakan untuk evaluasi akhir. ]      |
 
 ### 3.3 Goals
 
