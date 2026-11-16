@@ -1,4 +1,4 @@
-## INFORMASI PROYEK
+gihgugy## INFORMASI PROYEK
 
 **Judul Proyek**:
 ["Klasifikasi Kerusakan Jalan Berlubang & Prioritas Perbaikan Infrastruktur"]
@@ -118,7 +118,7 @@ Jelaskan dalam 1 paragraf pendek bagaimana proyek Anda melewati tahap L → M �
 
 1. Identifikasi jalan berlubang masih banyak dilakukan melalui inspeksi manual sehingga membutuhkan waktu, biaya, dan sumber daya yang besar serta berpotensi menghasilkan penilaian yang tidak konsisten.
 2. Kondisi visual jalan yang bervariasi, seperti perbedaan ukuran dan bentuk lubang, tekstur permukaan jalan, pencahayaan, dan sudut pengambilan gambar, menjadi tantangan dalam melakukan deteksi lubang secara otomatis.
-3. Dibutuhkan model machine learning berbasis computer vision yang mampu mendeteksi keberadaan dan lokasi jalan berlubang pada sebuah citra secara otomatis melalui prediksi bounding box.
+3. Dibutuhkan model machine learning berbasis computer vision yang mampu mendeteksi keberadaan dan lokasi jalan berlubang pada sebuah citra melalui prediksi bounding box, serta mengklasifikasikan tingkat keparahannya (Low, Medium, Critical) secara otomatis agar dapat dijadikan dasar penentuan prioritas perbaikan.
 4. Hasil deteksi jalan berlubang diharapkan dapat digunakan sebagai informasi pendukung untuk membantu proses pemantauan kondisi jalan dan menentukan prioritas perbaikan infrastruktur secara lebih cepat dan berbasis data.
 
 
@@ -128,8 +128,8 @@ Rumuskan masalah dalam kerangka _Learning Problem_:
 
 | Komponen      | Pertanyaan Panduan                                                                                          | Jawaban Anda |
 | ------------- | ----------------------------------------------------------------------------------------------------------- | ------------ |
-| **Target**    | Apa yang diprediksi? Jenis tugas (klasifikasi biner/multikelas, regresi, forecasting, clustering, dll.)?    | [ Target dari proyek ini adalah mendeteksi keberadaan dan lokasi jalan berlubang (pothole) pada citra jalan. Masalah ini dirumuskan sebagai tugas object detection dengan satu kelas objek, yaitu pothole. Model diharapkan mampu memprediksi lokasi lubang dalam bentuk bounding box serta memberikan tingkat keyakinan terhadap hasil deteksi. ]      |
-| **Objective** | Apa yang dioptimalkan/diminimalkan secara matematis (misal: cross-entropy, MSE)? Metrik keberhasilan utama? | [ Objective utama adalah membangun model yang mampu mendeteksi jalan berlubang secara akurat dengan meminimalkan kesalahan prediksi selama proses pelatihan. Untuk model object detection, fungsi loss disesuaikan dengan model yang digunakan dan umumnya mencakup kesalahan klasifikasi serta kesalahan lokalisasi bounding box. Keberhasilan model akan dievaluasi menggunakan Precision, Recall, dan mean Average Precision (mAP). Precision digunakan untuk mengukur ketepatan deteksi, Recall digunakan untuk mengukur kemampuan menemukan lubang yang ada, sedangkan mAP digunakan sebagai metrik utama untuk mengevaluasi performa object detection secara keseluruhan. ]      |
+| **Target**    | Apa yang diprediksi? Jenis tugas (klasifikasi biner/multikelas, regresi, forecasting, clustering, dll.)?    | [Target dari proyek ini ada dua. (1) Klasifikasi multikelas (multi-class image classification) untuk memprediksi tingkat keparahan kerusakan jalan berlubang ke dalam tiga kelas, yaitu Low, Medium, dan Critical. (2) Object detection untuk mendeteksi keberadaan dan lokasi lubang jalan pada citra dalam bentuk bounding box beserta tingkat keyakinan. Keluaran kedua tugas tersebut (tingkat keparahan dan rasio luas bounding box) kemudian dipetakan menjadi skor indeks urgensi melalui Priority Scoring Index berbasis Multi-Criteria Decision Making untuk menghasilkan urutan prioritas perbaikan jalan.]      |
+| **Objective** | Apa yang dioptimalkan/diminimalkan secara matematis (misal: cross-entropy, MSE)? Metrik keberhasilan utama? | [ Objective utama adalah membangun model yang mampu mendeteksi jalan berlubang secara akurat dengan meminimalkan kesalahan prediksi selama proses pelatihan. Untuk model klasifikasi, fungsi loss yang diminimalkan adalah categorical cross-entropy. Untuk model object detection (YOLO), fungsi loss mencakup kesalahan lokalisasi bounding box, kesalahan objectness/confidence, dan kesalahan klasifikasi. Keberhasilan model dievaluasi menggunakan Accuracy, Precision, Recall, dan F1-Score (dengan Macro F1-Score sebagai metrik utama klasifikasi karena distribusi kelas berpotensi tidak seimbang), serta mean Average Precision (mAP) sebagai metrik utama deteksi objek. Selain itu, inference latency per citra dicatat untuk menilai kelayakan penerapan. Metrik yang sama digunakan untuk membandingkan ketiga model. ]      |
 | **Data**      | Sumber, ukuran, jenis, dan asumsi tentang data (i.i.d.? distribusi train vs test?)                          | [ Data yang digunakan berasal dari Roboflow Universe Pothole Dataset yang berisi 665 citra jalan dengan anotasi lokasi jalan berlubang. Dataset memiliki satu kelas objek, yaitu pothole, dan digunakan untuk tugas object detection. Dataset telah dibagi dengan rasio 70% data training, 20% data validation, dan 10% data testing. Data training digunakan untuk melatih model, data validation digunakan dalam proses penyesuaian dan pemilihan model, sedangkan data testing digunakan untuk evaluasi akhir. ]      |
 
 ### 3.3 Goals
@@ -144,7 +144,13 @@ Tujuan harus spesifik, terukur, dan selaras dengan problem statement.
 
 > Sertakan minimal satu goal yang menunjukkan kontribusi terhadap target SDG yang dipilih (Bab 2.2).
 
-**[Tulis goals Anda di sini]**
+1. Membangun model klasifikasi tingkat keparahan kerusakan jalan berlubang ke dalam tiga kelas (Low, Medium, Critical) dengan target Macro F1-Score ≥ 0.70 pada data uji.
+2. Membangun model deteksi dan lokalisasi lubang jalan berbasis YOLO yang menghasilkan bounding box dengan target mAP@0.5 ≥ 0.60 pada data uji.
+3. Mengukur dan membandingkan performa tiga pendekatan model (baseline klasik, transfer learning CNN/ResNet, dan YOLO) menggunakan metrik yang sama, yaitu Accuracy, Precision, Recall, F1-Score, dan mAP.
+4. Menentukan model terbaik berdasarkan metrik evaluasi dan waktu inferensi per citra (inference latency) sebagai pertimbangan kelayakan penerapan.
+5. Mengembangkan Priority Scoring Index berbasis Multi-Criteria Decision Making yang menggabungkan tingkat keparahan visual, estimasi luas kerusakan (rasio area bounding box), dan kelas/fungsi jalan untuk menghasilkan rekomendasi urutan prioritas perbaikan.
+6. Berkontribusi pada SDG 9.1 (infrastruktur andal dan berkelanjutan) dan SDG 11.2 (keselamatan jalan raya) melalui sistem pendukung keputusan yang membantu instansi terkait mengalokasikan perbaikan jalan secara terukur dan berbasis data.
+7. Menghasilkan proyek yang reproducible, yaitu seluruh kode, konfigurasi (random seed, pembagian data), dan langkah eksperimen tersedia di repository GitHub.
 
 ### 3.4 Solution Approach **[M]**
 
@@ -161,7 +167,12 @@ Model sederhana sebagai pembanding dasar.
 - Decision Tree
 - Naive Bayes
 
-**[Jelaskan model baseline yang Anda pilih dan alasannya]**
+**Model yang dipilih adalah Logistic Regression dengan fitur HOG dan _Color Histogram_**
+**Alasan Pemilihan:**
+- Logistic Regression adalah model linear yang sederhana, cepat dilatih, mudah diinterpretasikan, dan tidak memerlukan GPU, sehingga cocok sebagai pembanding dasar.
+- HOG menangkap informasi tepi dan tekstur lokal, sedangkan Color Histogram menangkap informasi warna dan intensitas yang berkaitan dengan tampilan lubang.
+- Hasil baseline menjadi batas bawah performa, sehingga peningkatan dari model yang lebih kompleks dapat diukur secara objektif.
+- Keterbatasan yang diantisipasi: batas keputusan linear dan fitur yang dirancang manual kurang mampu menangani variasi pencahayaan, sudut pandang, dan tekstur aspal.
 
 #### **Model 2 – Advanced / ML Model**
 
@@ -175,7 +186,13 @@ Model machine learning yang lebih kompleks.
 - Clustering (K-Means, DBSCAN) - untuk unsupervised
 - PCA / dimensionality reduction (untuk preprocessing)
 
-**[Jelaskan model advanced yang Anda pilih dan alasannya]**
+**Model yang dipilih adalah Random Forest dengan fitur HOG dan _Color Histogram_**
+**Alasan Pemilihan:**
+- Random Forest mampu menangkap hubungan non-linear antar fitur yang tidak dapat dipelajari oleh Logistic Regression.
+- Lebih tahan terhadap overfitting dibanding satu decision tree dan bekerja baik pada dataset berukuran kecil (665 citra).
+- Memberikan feature importance sehingga kontribusi fitur HOG dan warna dapat dianalisis.
+- Hiperparameter utama (n_estimators, max_depth, min_samples_split) akan di-tuning menggunakan data validation.
+- Keterbatasan yang diantisipasi: fitur tetap dirancang manual dan kurang mampu menangkap pola visual yang kompleks dibanding CNN.
 
 #### **Model 3 – Deep Learning Model (WAJIB)**
 
@@ -224,7 +241,13 @@ Model deep learning yang sesuai dengan jenis data.
 - ❌ Model tidak di-train (hanya define arsitektur)
 - ❌ Tidak ada evaluasi pada test set
 
-**[Jelaskan model deep learning yang Anda pilih dan alasannya]**
+**Transfer Learning CNN (ResNet-50 atau MobileNetV3) untuk klasifikasi tingkat keparahan, dan YOLOv8/YOLOv11 (varian nano atau small) untuk deteksi dan lokalisasi lubang.**
+**Alasan Pemilihan:**
+- Transfer learning (ResNet, MobileNet) direkomendasikan untuk data citra dan cocok untuk dataset kecil karena memanfaatkan pengetahuan visual dari data berskala besar serta mengurangi risiko overfitting.
+- CNN mempelajari fitur secara otomatis (tepi, tekstur, bentuk), sehingga lebih adaptif terhadap variasi pencahayaan dan sudut pandang dibanding fitur manual pada Model 1 dan 2.
+- YOLO menghasilkan koordinat bounding box sehingga luas kerusakan dapat diestimasi sebagai masukan Priority Scoring Index, dan kecepatan inferensinya mendukung penerapan pada survei video atau kamera kendaraan.
+- Pelatihan mengikuti ketentuan minimum: minimal 10 epoch, plot loss dan metrik per epoch, evaluasi pada test set, serta pencatatan waktu pelatihan. Pelatihan dilakukan di Google Colab/Kaggle.
+- Keterbatasan yang diantisipasi: risiko overfitting pada data kecil (dimitigasi dengan augmentasi data dan early stopping) serta penurunan performa pada kondisi yang jarang muncul di data latih seperti malam hari atau jalan tergenang.
 
 ---
 
