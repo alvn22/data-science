@@ -12,15 +12,21 @@ Dataset yang digunakan berupa kumpulan citra jalan rusak dan berlubang yang dipe
 
 ## Metode
 
-Model yang dikembangkan menggunakan pendekatan *Supervised Learning* dan *Computer Vision*, dikombinasikan dengan sistem skoring prioritas:
+Pengembangan model mengikuti skema komparasi tiga tingkat kompleksitas (*Supervised Learning* & *Computer Vision*) yang diintegrasikan dengan sistem skoring prioritas:
 
-- **Convolutional Neural Network (CNN) / ResNet** – model baseline untuk klasifikasi citra tingkat keparahan lubang.
-- **YOLO (You Only Look Once)** – deteksi dan lokalisasi lubang jalan pada citra secara real-time.
-- **Priority Scoring Index (Multi-Criteria Decision Making)** – pembobotan prioritas perbaikan berdasarkan tingkat keparahan visual, estimasi volume kerusakan, dan kelas/fungsi jalan.
+1. **Model 1 – Baseline Model: Logistic Regression**
+   Klasifikasi dasar menggunakan input ekstraksi fitur statistik warna (*Color Histogram* RGB/Grayscale) sebagai tolok ukur performa awal (*lower-bound benchmark*).
+2. **Model 2 – Advanced ML Model: Random Forest / Support Vector Machine (SVM)**
+   Klasifikasi tingkat lanjut menggunakan ekstraksi fitur tekstur dan tepian **Histogram of Oriented Gradients (HOG)** untuk menangkap pola non-linear permukaan aspal.
+3. **Model 3 – Deep Learning Model: Transfer Learning (ResNet-50 / MobileNetV2)**
+   Pemrosesan citra *end-to-end* berbasis *Convolutional Neural Network (CNN)* dengan bobot *pre-trained* untuk mengklasifikasikan tingkat keparahan lubang secara otomatis.
 
-Evaluasi model klasifikasi dan deteksi menggunakan metrik:
-- *Accuracy*, *Precision*, *Recall*, dan *F1-Score*
-- *Mean Average Precision (mAP)* untuk lokalisasi objek kerusakan
+**Tahap Lanjutan (Post-Processing):**
+- **Priority Scoring Index** – perhitungan bobot prioritas perbaikan infrastruktur berdasarkan kelas keparahan hasil prediksi model dan rasio luas area kerusakan (*bounding box* anotasi).
+
+**Metrik Evaluasi:**
+- *Accuracy*, *Macro Precision*, *Macro Recall*, dan *Macro F1-Score* untuk membandingkan performa klasifikasi ketiga model secara adil.
+- *Confusion Matrix* dan *Inference Time* (waktu komputasi prediksi).
 
 ## Tujuan
 
@@ -34,8 +40,10 @@ Evaluasi model klasifikasi dan deteksi menggunakan metrik:
 
 ```text
 data-dcience/
-├── Docs/
+├── docs/
 │   ├── 09_LAMPIRAN_B.md
-│   ├── 09_minggu9.md
 │   └── Laporan_Proyek_ML_LMOP.md
+├── notebook/
+│   ├── 01_learning_problem_eda.ipynb
+│   └── 02_data_preparation.ipynb
 └── README.md

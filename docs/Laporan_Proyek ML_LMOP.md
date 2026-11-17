@@ -1,4 +1,4 @@
-gihgugy## INFORMASI PROYEK
+## INFORMASI PROYEK
 
 **Judul Proyek**:
 ["Klasifikasi Kerusakan Jalan Berlubang & Prioritas Perbaikan Infrastruktur"]
@@ -13,7 +13,7 @@ gihgugy## INFORMASI PROYEK
 **Mata Kuliah:** Data Science  
 **Dosen Pengampu:** Gus Nanang Syaifuddiin, S.Kom., M.Kom.  
 **Tahun Akademik:** Tahun 2024 / Semester 5  
-**Link GitHub Repository:**  
+**Link GitHub Repository:** https://github.com/alvn22/data-science
 **Link Video Pembahasan:**  
 **SDG yang Dipilih:**
 | ID | Deskripsi |
@@ -98,7 +98,7 @@ Ide proyek **berasal dari mahasiswa** dan harus selaras dengan **salah satu** da
 | **SDG yang dipilih**     | Goal nomor berapa dan apa namanya?                                             | SDG 9 (Industry, Innovation and Infrastructure)<br> SDG 11 (Sustainable Cities and Communities)      |
 | **Target SDG**           | Target (misal 3.4, 13.1) mana yang paling relevan?                             | Target 9.1 Membangun infrastruktur yang berkelanjutan <br> Target 11.2 Menyediakan akses terhadap sistem transportasi yang aman dan berkelanjutan dan meningkatkan keselamatan jalan raya      |
 | **Masalah nyata**        | Masalah konkret apa yang diangkat? Siapa yang terdampak?                       | **Masalah konkret**: Kerusakan perkerasan jalan berupa lubang (potholes) yang lambat terdeteksi dan tidak tertangani tepat waktu akibat metode survei manual konvensional yang memakan waktu, biaya tinggi, serta bersifat subjektif. Keterbatasan anggaran pemeliharaan sering kali diperparah oleh ketiadaan sistem penentuan prioritas berbasis data kuantitatif.<br>**Pihak terdampak**: Pengguna jalan yang menghadapi risiko tinggi kecelakaan fatal, cidera fisik, dan kerugian finansial akibat kerusakan kendaraan.      |
-| **Peran ML**             | Mengapa ML/DL cocok? Apa keputusan atau proses yang dibantu?                   | **Mengapa cocok**: Deteksi visual kerusakan jalan melibatkan variasi pola tekstur aspal, ukuran lubang, pencahayaan, dan sudut pandang yang kompleks, sehingga pendekatan Computer Vision (Deep Learning/CNN/YOLO) jauh lebih adaptif dan otomatis dibanding aturan pemrograman berbasis aturan (rule-based).<br>**Keputusan/proses yang dibantu**:<br>1. **Automasi Deteksi & Klasifikasi**: Mengotomatisasi identifikasi keberadaan dan tingkat keparahan lubang (Low, Medium, Critical) dari kumpulan citra survei jalan.<br>2. **Decision-Support Prioritisasi**: Mengintegrasikan rasio dimensi lubang (bounding box area) ke dalam formula indeks prioritas perbaikan, membantu instansi teknis menentukan ruas jalan mana yang harus diperbaiki terlebih dahulu secara objektif.      |
+| **Peran ML**             | Mengapa ML/DL cocok? Apa keputusan atau proses yang dibantu?                   | **Mengapa cocok**: Deteksi visual kerusakan jalan melibatkan variasi pola tekstur aspal, ukuran lubang, dan pencahayaan yang kompleks, sehingga pendekatan *Computer Vision* & *Machine Learning* jauh lebih adaptif dibanding aturan *rule-based* manual.<br>**Keputusan yang dibantu**: Automasi klasifikasi tingkat keparahan lubang (*Low, Medium, Critical*) dan penentuan skor prioritas perbaikan jalan secara objektif.      |
 | **Indikator kontribusi** | Bagaimana hasil model berkontribusi pada target SDG (langsung/tidak langsung)? | **Kontribusi Langsung**: Meningkatkan efisiensi pemantauan infrastruktur jalan dengan mempercepat waktu identifikasi titik rawan rusak, sehingga jadwal pemeliharaan preventif dan korektif dapat dilakukan lebih dini sebelum kerusakan meluas.<br>**Kontribusi Tidak Langsung**: Menurunkan angka kecelakaan lalu lintas akibat jalan berlubang, memperlancar konektivitas transportasi logistik lokal, dan mengoptimalkan efisiensi penyerapan anggaran perbaikan infrastruktur publik.      |
 | **Pertimbangan etika**   | Risiko bias, privasi, atau dampak salah prediksi?                              | 1. **Risiko Bias Data**: Model berpotensi kurang akurat mendeteksi lubang yang tergenang air hujan, tertutup bayangan pohon tebal, atau diambil pada malam hari jika variasi data latih tidak seimbang. Mitigasi: augmentasi data pada aspek pencahayaan, kontras, dan penambahan noise.<br>2. **Privasi Publik**: Rekaman citra jalan berpotensi memuat informasi sensitif seperti wajah pengendara/pejalan kaki dan plat nomor kendaraan. Mitigasi: memastikan dataset bersumber dari data terbuka (open license) dan menerapkan teknik masking/blurring otomatis pada area privasi sebelum citra diproses/dipublikasikan.<br>3. **Dampak Salah Prediksi**: False Negative (lubang berbahaya terlewat) berisiko fatal bagi keselamatan, sedangkan False Positive memboroskan alokasi sumber daya. Mitigasi: model diposisikan secara etis sebagai sistem pendukung keputusan (decision support), di mana verifikasi lapangan oleh pengawas teknis tetap menjadi tahapan validasi akhir sebelum eksekusi pekerjaan fisik.      |
 
@@ -167,7 +167,7 @@ Model sederhana sebagai pembanding dasar.
 - Decision Tree
 - Naive Bayes
 
-**Model yang dipilih adalah Logistic Regression dengan fitur HOG dan _Color Histogram_**
+**Model yang dipilih adalah Logistic Regression dengan fitur HOG dan _Color Histogram_** <br>
 **Alasan Pemilihan:**
 - Logistic Regression adalah model linear yang sederhana, cepat dilatih, mudah diinterpretasikan, dan tidak memerlukan GPU, sehingga cocok sebagai pembanding dasar.
 - HOG menangkap informasi tepi dan tekstur lokal, sedangkan Color Histogram menangkap informasi warna dan intensitas yang berkaitan dengan tampilan lubang.
@@ -186,7 +186,7 @@ Model machine learning yang lebih kompleks.
 - Clustering (K-Means, DBSCAN) - untuk unsupervised
 - PCA / dimensionality reduction (untuk preprocessing)
 
-**Model yang dipilih adalah Random Forest dengan fitur HOG dan _Color Histogram_**
+**Model yang dipilih adalah Random Forest** <br>
 **Alasan Pemilihan:**
 - Random Forest mampu menangkap hubungan non-linear antar fitur yang tidak dapat dipelajari oleh Logistic Regression.
 - Lebih tahan terhadap overfitting dibanding satu decision tree dan bekerja baik pada dataset berukuran kecil (665 citra).
@@ -241,7 +241,7 @@ Model deep learning yang sesuai dengan jenis data.
 - ❌ Model tidak di-train (hanya define arsitektur)
 - ❌ Tidak ada evaluasi pada test set
 
-**Transfer Learning CNN (ResNet-50 atau MobileNetV3) untuk klasifikasi tingkat keparahan, dan YOLOv8/YOLOv11 (varian nano atau small) untuk deteksi dan lokalisasi lubang.**
+**Model yang dipilih adalah Transfer Learning CNN untuk klasifikasi tingkat keparahan, dan YOLOv8/YOLOv11 untuk deteksi dan lokalisasi lubang.**
 **Alasan Pemilihan:**
 - Transfer learning (ResNet, MobileNet) direkomendasikan untuk data citra dan cocok untuk dataset kecil karena memanfaatkan pengetahuan visual dari data berskala besar serta mengurangi risiko overfitting.
 - CNN mempelajari fitur secara otomatis (tepi, tekstur, bentuk), sehingga lebih adaptif terhadap variasi pencahayaan dan sudut pandang dibanding fitur manual pada Model 1 dan 2.
@@ -256,15 +256,17 @@ Model deep learning yang sesuai dengan jenis data.
 ### 4.1 Informasi Dataset
 
 **Sumber Dataset:**  
-[Sebutkan sumber: Kaggle, UCI ML Repository, atau sumber lain dengan URL]
+Dataset diperoleh dari repositori publik **Roboflow Universe** pada proyek *Pothole Computer Vision Project* oleh Brad Dwyer.  
+- **URL**: [https://universe.roboflow.com/brad-dwyer/pothole-voxrl](https://universe.roboflow.com/brad-dwyer/pothole-voxrl)
+- **Lisensi**: ODbL v1.0 (*Open Database License*)
 
 **Deskripsi Dataset:**
 
-- Jumlah baris (rows): [angka]
-- Jumlah kolom (columns/features): [angka]
-- Tipe data: [Tabular / Image / Text / Time Series / Audio / Video]
-- Ukuran dataset: [MB/GB]
-- Format file: [CSV / JSON / Images / TXT / etc.]
+- **Jumlah baris (rows / sampel citra)**: 665 citra dasar (terbagi menjadi 465 *train*, 133 *valid*, dan 67 *test*), dengan total >1.700 anotasi objek *bounding box* lubang jalan (dapat diperluas hingga ~1.595 citra melalui *augmentation*).
+- **Jumlah kolom (columns/features)**: 8 kolom atribut metadata dan koordinat spasial pada file `_annotations.csv` (ditambah data citra `.jpg` dan 1 kolom target turunan `severity_label`)
+- **Tipe data**: Image Data (Citra Digital RGB).
+- **Ukuran dataset**: ± 46 MB
+- **Format file**: `.jpg` (citra digital) dan `_annotations.csv` (anotasi format TensorFlow Object Detection CSV)
 
 ### 4.2 Deskripsi Fitur
 
@@ -282,17 +284,30 @@ Jelaskan setiap fitur/kolom yang ada dalam dataset.
 
 **[Buat tabel deskripsi fitur Anda di sini]**
 
+| Nama Fitur | Tipe Data | Deskripsi | Contoh Nilai |
+|------------|-----------|-----------|--------------|
+| `image` | Image (3D Array) | Citra digital permukaan jalan dalam ruang warna RGB | Array `(H, W, 3)` dengan intensitas `0–255` |
+| `filename` | String | Nama file citra `.jpg` yang berpasangan dengan baris anotasi | `"img-105_jpg.rf.8a1b2c.jpg"` |
+| `width` | Integer | Lebar resolusi citra asli dalam satuan piksel | `640` |
+| `height` | Integer | Tinggi resolusi citra asli dalam satuan piksel | `640` |
+| `class` | Categorical (String) | Nama kelas objek bawaan dari anotasi Roboflow | `"pothole"` |
+| `xmin` | Integer | Koordinat piksel batas kiri *bounding box* | `112` |
+| `ymin` | Integer | Koordinat piksel batas atas *bounding box* | `245` |
+| `xmax` | Integer | Koordinat piksel batas kanan *bounding box* | `310` |
+| `ymax` | Integer | Koordinat piksel batas bawah *bounding box* | `412` |
+| `severity_label` *(target)* | Categorical | Label tingkat keparahan lubang hasil pemetaan rasio luas *bounding box* | `"Low"`, `"Medium"`, `"Critical"` |
+
 ### 4.3 Kondisi Data
 
 Jelaskan kondisi dan permasalahan data:
 
-- **Missing Values:** [Ada/Tidak, berapa persen?]
-- **Duplicate Data:** [Ada/Tidak, berapa banyak?]
-- **Outliers:** [Ada/Tidak, pada fitur apa?]
-- **Imbalanced Data:** [Ada/Tidak, rasio kelas?]
-- **Noise:** [Jelaskan jika ada]
-- **Data Quality Issues:** [Jelaskan jika ada masalah lain]
-- **Asumsi Data (i.i.d., distribusi train-test, potensi data leakage):** [Jelaskan]
+- **Missing Values:** Tidak ada nilai kosong (`0%` missing values) pada seluruh 8 kolom metadata maupun pasangan file citra `.jpg` di folder `train`, `valid`, dan `test`.
+- **Duplicate Data:** Tidak ada duplikat berdasarkan pengecekan MD5 hash file citra.
+- **Outliers:** Ada pada fitur luas area *bounding box* (`Area Ratio`), di mana terdapat [X] sampel dengan ukuran lubang sangat kecil (`< 0.5%` luas citra) dan [Y] sampel dengan kerusakan sangat luas (`> 15%` luas citra) akibat jarak pengambilan kamera yang terlalu dekat.
+- **Imbalanced Data:** Ada. Setelah pemetaan rasio luas ke dalam 3 kelas target, distribusi data tidak seimbang dengan komposisi: `Low` sebanyak [X] citra ([X]%), `Medium` sebanyak [Y] citra ([Y]%), dan `Critical` sebanyak [Z] citra ([Z]%).
+- **Noise:** Ada gangguan visual pada citra berupa bayangan pohon/bangunan, pantulan cahaya matahari pada aspal, genangan air hujan, serta variasi tambalan jalan lama.
+- **Data Quality Issues:** Anotasi asli hanya memiliki 1 kelas objek (`pothole`) tanpa label keparahan eksplisit, serta beberapa *bounding box* yang saling tumpang tindih (*overlapping*) pada area jalan yang rusak parah.
+- **Asumsi Data (i.i.d., distribusi train-test, potensi data leakage):** Sampel citra diasumsikan independen dan terdistribusi identik (*i.i.d.*). Potensi *data leakage* muncul apabila proses augmentasi atau *scaling* dilakukan sebelum pemisahan partisi, sehingga seluruh transformasi hanya diterapkan pada *training set*.
 
 ### 4.4 Exploratory Data Analysis (EDA) - (**OPSIONAL**)
 
@@ -310,26 +325,26 @@ Jelaskan kondisi dan permasalahan data:
 - Confusion matrix heatmap
 - Class distribution plot
 
-#### Visualisasi 1: [Judul Visualisasi]
+#### Visualisasi 1: Distribusi Kelas Tingkat Keparahan Kerusakan Jalan
 
-[Insert gambar/plot]
-
-**Insight:**  
-[Jelaskan apa yang dapat dipelajari dari visualisasi ini]
-
-#### Visualisasi 2: [Judul Visualisasi]
-
-[Insert gambar/plot]
+[Insert bar chart distribusi jumlah sampel per kelas: Low, Medium, Critical]
 
 **Insight:**  
-[Jelaskan apa yang dapat dipelajari dari visualisasi ini]
+Memperlihatkan keseimbangan atau ketimpangan jumlah sampel antar kelas tingkat keparahan setelah proses pelabelan turunan, yang menjadi acuan dalam pemilihan metrik evaluasi utama (*Macro F1-Score*) serta strategi *data balancing* pada partisi *training*.
 
-#### Visualisasi 3: [Judul Visualisasi]
+#### Visualisasi 2: Distribusi Rasio Luas *Bounding Box* dan Jumlah Objek per Citra
 
-[Insert gambar/plot]
+[Insert histogram / boxplot rasio luas bounding box terhadap luas citra dan jumlah lubang per gambar]
 
 **Insight:**  
-[Jelaskan apa yang dapat dipelajari dari visualisasi ini]
+Menggambarkan sebaran ukuran fisik relatif lubang jalan pada dataset serta memvalidasi batas pemisahan antara kategori kerusakan *Low*, *Medium*, dan *Critical*.
+
+#### Visualisasi 3: Contoh Sampel Citra Berdasarkan Tingkat Keparahan dan Kondisi Pencahayaan
+
+[Insert grid sampel citra beserta anotasi bounding box untuk tiap kelas keparahan dan variasi pencahayaan]
+
+**Insight:**  
+Menunjukkan variasi tekstur aspal, kedalaman bayangan di dalam lubang, serta *noise* visual lapangan yang menjelaskan keterbatasan fitur warna sederhana (Model 1) dibandingkan fitur tepi/tekstur (Model 2) dan fitur spasial hierarkis CNN (Model 3).
 
 ---
 
@@ -356,6 +371,15 @@ Missing Values:
 
 **[Jelaskan langkah-langkah data cleaning yang Anda lakukan]**
 
+```
+1. Validasi Kelengkapan Pasangan File:
+   - Memeriksa kesesuaian antara kolom 'filename' pada _annotations.csv dengan file citra (.jpg) fisik; menghapus baris dengan nilai kosong (missing values) atau file citra yang hilang.
+2. Penghapusan Duplikat:
+   - Melakukan pengecekan MD5 hash pada file citra untuk menghapus duplikasi yang berpotensi menyebabkan bias evaluasi atau kebocoran data lintas partisi.
+3. Validasi & Clipping Koordinat Anotasi:
+   - Memfilter bounding box tidak valid (xmax <= xmin atau ymax <= ymin) serta melakukan clipping koordinat agar tetap berada dalam rentang [0, width] dan [0, height].
+```
+
 ### 5.2 Feature Engineering
 
 **Aktivitas:**
@@ -366,6 +390,19 @@ Missing Values:
 - Dimensionality reduction
 
 **[Jelaskan feature engineering yang Anda lakukan]**
+
+1. Penurunan Target Tingkat Keparahan (Target Derivation):
+   - Menghitung rasio luas area bounding box terhadap total luas citra dari kolom CSV:
+     Area Ratio = ((xmax - xmin) * (ymax - ymin)) / (width * height)
+   - Jika satu citra memiliki lebih dari satu lubang (beberapa baris dengan 'filename' sama), diagregasikan per citra menggunakan nilai rasio luas maksimum (lubang paling parah pada citra tersebut).
+   - Pemetaan ambang batas (threshold) kelas keparahan:
+     * Low      : Area Ratio < 0.02 (kurang dari 2% luas frame citra)
+     * Medium   : 0.02 <= Area Ratio <= 0.07 (2% hingga 7% luas frame citra)
+     * Critical : Area Ratio > 0.07 (lebih dari 7% luas frame citra)
+
+2. Ekstraksi Fitur untuk Model Klasik (Model 1 & Model 2):
+   - Color Histogram (RGB): Mengekstrak distribusi intensitas warna (32 bin per kanal = 96 fitur) dan tingkat kegelapan area jalan berlubang sebagai fitur statistik untuk Logistic Regression dan Random Forest.
+   - Histogram of Oriented Gradients (HOG): Mengekstrak orientasi gradien tepi (9 orientations, 16x16 pixels per cell, 2x2 cells per block) dan tekstur kasar permukaan aspal yang pecah untuk menangkap pola geometris lokal.
 
 ### 5.3 Data Transformation
 
@@ -399,6 +436,17 @@ Missing Values:
 
 **[Jelaskan transformasi yang Anda lakukan]**
 
+1. Resizing (Penyeragaman Ukuran Citra):
+   - Mengubah dimensi seluruh citra menjadi 224 × 224 piksel untuk ekstraksi fitur HOG/Color Histogram serta arsitektur klasifikasi CNN (ResNet-50 / MobileNetV3), dan 640 × 640 piksel untuk arsitektur object detection YOLO.
+
+2. Encoding & Scaling:
+   - Label Encoding pada target kategori tingkat keparahan: Low -> 0, Medium -> 1, Critical -> 2.
+   - Normalisasi nilai piksel citra ke rentang [0, 1] (serta standardisasi mean/std ImageNet untuk model Transfer Learning).
+   - StandardScaler pada vektor fitur tabular hasil ekstraksi HOG dan Color Histogram (fit dilakukan eksklusif pada training set, lalu transform diterapkan ke validation dan test set).
+
+3. Data Augmentation (Hanya pada Training Set):
+   - Menerapkan horizontal flip, penyesuaian brightness dan contrast (±15–20%), rotasi ringan (±10°), serta random cutout/noise untuk meningkatkan generalisasi model terhadap variasi pencahayaan dan sudut kamera.
+
 ### 5.4 Data Splitting
 
 **Strategi pembagian data:**
@@ -422,6 +470,15 @@ Menggunakan stratified split untuk mempertahankan distribusi kelas:
 
 **[Jelaskan strategi splitting Anda dan alasannya]**
 
+```
+Dataset dibagi menjadi tiga partisi terpisah dengan random_state = 42 untuk menjamin reproducibility:
+- Training set   : 70% (465 citra)
+- Validation set : 20% (133 citra)
+- Test set       : 10% (67 citra)
+```
+
+> Rasio 70:20:10 memberikan porsi data latih yang cukup (465 citra) untuk melatih model deep learning dengan transfer learning, sekaligus menyediakan 133 citra validasi untuk hyperparameter tuning dan 67 citra uji yang terisolasi sepenuhnya.
+
 ### 5.5 Data Balancing (jika diperlukan)
 
 **Teknik yang digunakan:**
@@ -437,12 +494,12 @@ Menggunakan stratified split untuk mempertahankan distribusi kelas:
 
 **Per langkah, jelaskan:**
 
-1. **Apa** yang dilakukan
-   **[Jelaskan ]**
-2. **Mengapa** penting
-   **[Jelaskan Mengapa ?]**
-3. **Bagaimana** implementasinya
-   **[Jelaskan Bagaimana]**
+1. **Apa** yang dilakukan <br>
+   Dilakukan pembersihan pasangan file citra dan anotasi, pemeriksaan duplikat, penurunan label target tingkat keparahan (Low, Medium, Critical) dari rasio luas kerusakan, ekstraksi fitur Color Histogram dan HOG untuk model klasik, transformasi dimensi/skala citra, pembagian data stratified dengan random_state=42, serta augmentasi dan penyeimbangan kelas khusus pada data latih.
+2. **Mengapa** penting <br>
+   Dataset asli hanya menyediakan koordinat objek tunggal (pothole) tanpa label keparahan, sehingga diperlukan transformasi fitur dan pelabelan terstandar agar seluruh model (baseline, advanced ML, dan deep learning) dapat dilatih secara adil tanpa kebocoran informasi (data leakage) dari data validasi maupun uji.
+3. **Bagaimana** implementasinya <br>
+   Seluruh tahapan diimplementasikan secara modular pada notebook `01_learning_problem_eda.ipynb` dan `02_data_preparation.ipynb` menggunakan pandas, OpenCV, scikit-image, scikit-learn (StandardScaler, train_test_split dengan stratify dan random_state=42)
 
 ---
 
