@@ -303,8 +303,8 @@ Jelaskan kondisi dan permasalahan data:
 
 - **Missing Values:** Tidak ada nilai kosong (`0%` missing values) pada seluruh 8 kolom metadata maupun pasangan file citra `.jpg` di folder `train`, `valid`, dan `test`.
 - **Duplicate Data:** Tidak ada duplikat berdasarkan pengecekan MD5 hash file citra.
-- **Outliers:** Ada pada fitur luas area *bounding box* (`Area Ratio`), di mana terdapat [X] sampel dengan ukuran lubang sangat kecil (`< 0.5%` luas citra) dan [Y] sampel dengan kerusakan sangat luas (`> 15%` luas citra) akibat jarak pengambilan kamera yang terlalu dekat.
-- **Imbalanced Data:** Ada. Setelah pemetaan rasio luas ke dalam 3 kelas target, distribusi data tidak seimbang dengan komposisi: `Low` sebanyak [X] citra ([X]%), `Medium` sebanyak [Y] citra ([Y]%), dan `Critical` sebanyak [Z] citra ([Z]%).
+- **Outliers:** Ada pada fitur luas area *bounding box* (`Area Ratio`), di mana terdapat 40 sampel dengan ukuran lubang sangat kecil (`< 0.5%` luas citra) dan 378 sampel dengan kerusakan sangat luas (`> 15%` luas citra) akibat jarak pengambilan kamera yang terlalu dekat.
+- **Imbalanced Data:** Ada. Setelah pemetaan rasio luas ke dalam 3 kelas target, distribusi data tidak seimbang dengan komposisi: `Low` sebanyak 40 citra (6.02%), `Medium` sebanyak 247 citra (37.14%), dan `Critical` sebanyak 378 citra (56.84%).
 - **Noise:** Ada gangguan visual pada citra berupa bayangan pohon/bangunan, pantulan cahaya matahari pada aspal, genangan air hujan, serta variasi tambalan jalan lama.
 - **Data Quality Issues:** Anotasi asli hanya memiliki 1 kelas objek (`pothole`) tanpa label keparahan eksplisit, serta beberapa *bounding box* yang saling tumpang tindih (*overlapping*) pada area jalan yang rusak parah.
 - **Asumsi Data (i.i.d., distribusi train-test, potensi data leakage):** Sampel citra diasumsikan independen dan terdistribusi identik (*i.i.d.*). Potensi *data leakage* muncul apabila proses augmentasi atau *scaling* dilakukan sebelum pemisahan partisi, sehingga seluruh transformasi hanya diterapkan pada *training set*.
