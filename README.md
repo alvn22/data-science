@@ -46,4 +46,8 @@ data-dcience/
 ├── notebook/
 │   ├── 01_learning_problem_eda.ipynb
 │   └── 02_data_preparation.ipynb
+├── report/figures/
+│   ├── eda_01_class_distribution.png
+│   └── eda_02_area_ratio_distribution.png
+│   └── eda_03_sample_images.png
 └── README.md

@@ -327,21 +327,21 @@ Jelaskan kondisi dan permasalahan data:
 
 #### Visualisasi 1: Distribusi Kelas Tingkat Keparahan Kerusakan Jalan
 
-[Insert bar chart distribusi jumlah sampel per kelas: Low, Medium, Critical]
+![Distribusi Kelas Tingkat Keparahan](../reports/figures/eda_01_class_distribution.png)
 
 **Insight:**  
 Memperlihatkan keseimbangan atau ketimpangan jumlah sampel antar kelas tingkat keparahan setelah proses pelabelan turunan, yang menjadi acuan dalam pemilihan metrik evaluasi utama (*Macro F1-Score*) serta strategi *data balancing* pada partisi *training*.
 
 #### Visualisasi 2: Distribusi Rasio Luas *Bounding Box* dan Jumlah Objek per Citra
 
-[Insert histogram / boxplot rasio luas bounding box terhadap luas citra dan jumlah lubang per gambar]
+![Distribusi Rasio Luas Bounding Box](../reports/figures/eda_02_area_ratio_distribution.png)
 
 **Insight:**  
 Menggambarkan sebaran ukuran fisik relatif lubang jalan pada dataset serta memvalidasi batas pemisahan antara kategori kerusakan *Low*, *Medium*, dan *Critical*.
 
 #### Visualisasi 3: Contoh Sampel Citra Berdasarkan Tingkat Keparahan dan Kondisi Pencahayaan
 
-[Insert grid sampel citra beserta anotasi bounding box untuk tiap kelas keparahan dan variasi pencahayaan]
+![Sampel Citra dan Anotasi Bounding Box](../reports/figures/eda_03_sample_images.png)
 
 **Insight:**  
 Menunjukkan variasi tekstur aspal, kedalaman bayangan di dalam lubang, serta *noise* visual lapangan yang menjelaskan keterbatasan fitur warna sederhana (Model 1) dibandingkan fitur tepi/tekstur (Model 2) dan fitur spasial hierarkis CNN (Model 3).
