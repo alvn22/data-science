@@ -511,45 +511,95 @@ Dataset dibagi menjadi tiga partisi terpisah dengan random_state = 42 untuk menj
 
 #### 6.1.1 Deskripsi Model **[M]**
 
-**Nama Model:** [Nama model, misal: Logistic Regression]  
+**Nama Model:** [Logistic Regression]  
 **Teori Singkat:**  
-[Jelaskan secara singkat bagaimana model ini bekerja]  
+Logistic Regression menghitung skor linear untuk setiap kelas, $z_k = \mathbf{w}_k^\top \mathbf{x} + b_k$, lalu mengubahnya menjadi probabilitas dengan fungsi softmax: $P(y=k \mid \mathbf{x}) = \frac{e^{z_k}}{\sum_j e^{z_j}}$. Parameter dipelajari dengan meminimalkan _cross-entropy (log-loss)_ ditambah penalti regularisasi L2. Prediksi akhir adalah kelas dengan probabilitas tertinggi.
 **Alasan Pemilihan:**  
-[Mengapa memilih model ini sebagai baseline?]
+- Sederhana, cepat dilatih, dan tidak memerlukan GPU.
+- Koefisien dapat diinterpretasikan, sehingga mudah dilihat fitur mana yang paling berpengaruh.
+- Menjadi _lower-bund benchmark_ jika model model advanced dan deep learning tidak jauh lebih baik, kompleksitas tambahan tidak sepadan.
 
 #### 6.1.2 Hypothesis Space & Inductive Bias **[M]**
 
-- **Model family / arsitektur:** [misal: model linear]
-- **Hypothesis space:** [himpunan fungsi yang dapat direpresentasikan, misal: batas keputusan linear]
-- **Inductive bias / asumsi:** [misal: hubungan fitur-target linear, fitur independen]
-- **Implikasi terhadap dataset Anda:** [apakah asumsi cocok dengan data?]
+- **Model family / arsitektur:** model linear
+- **Hypothesis space:** himpunan fungsi $h(\mathbf{x}) = \text{softmax}(W\mathbf{x} + \mathbf{b})$, yaitu batas keputusan antarkelas berbentuk *hyperplane* linear di ruang fitur, tidak bisa membentuk batas non-linear.
+- **Inductive bias / asumsi:** 
+   - (1) kelas dapat dipisahkan secara linear di ruang fitur
+   - (2) pengaruh tiap fitur bersifat aditif tanpa interaksi antar fitur
+   - (3) regularisasi L2 mengutamakan bobot kecil dan merata.
+- **Implikasi terhadap dataset Anda:** label keparahan diturunkan dari rasio luas _bounding box_, sementara fitur _color histogram_ hanya menangkap distribusi warna global, bukan bentuk atau ukuran lubang secara spasial. Hubungan fitur-target kemungkinan non-linear, sehingga baseline diperkirakan cukup terbatas. Itu justru sesuai peran baseline sebagai pembanding bawah. Distribusi kelas juga tidak seimbang (Low ± 6%), sehingga perlu `class_weight` dan metrik macro.
 
 #### 6.1.3 Implementasi (Ringkas) **[M]**
 
+Data train dan validation dimuat dari hasil `02_data_preparation.ipynb` (`classical_features.npz`, sudah di-scale dengan `StandardScaler` yang di-fit hanya pada training set). Fitur baseline adalah 96 fitur Color Histogram RGB (32 bin x 3 kanal), sehingga dimensi data `X_train` = (465, 96) dan `X_val` = (133, 96).
+
 ```python
-# Contoh kode (opsional, bisa dipindah ke GitHub)
+import numpy as np
 from sklearn.linear_model import LogisticRegression
 
-model_baseline = LogisticRegression(C=1.0, max_iter=100)
+# Load fitur hasil data preparation
+data = np.load("classical_features.npz")
+X_train, y_train = data["X_train"][:, :96], data["y_train"]   # 96 fitur Color Histogram
+X_val,   y_val   = data["X_val"][:, :96],   data["y_val"]
+
+# Model 1: Baseline Logistic Regression (multinomial)
+model_baseline = LogisticRegression(
+    penalty="l2", C=1.0, solver="lbfgs",
+    max_iter=1000, class_weight="balanced", random_state=42
+)
 model_baseline.fit(X_train, y_train)
-y_pred_baseline = model_baseline.predict(X_test)
+
+# Prediksi pada validation set
+y_pred_baseline = model_baseline.predict(X_val)
 ```
 
 #### 6.1.4 Optimization: Objective, Hyperparameter & Regularisasi **[O]**
 
-**Objective/loss yang dioptimalkan:** [misal: log-loss + L2]  
+**Objective/loss yang dioptimalkan:** *multinomial log-loss (cross-entropy)* dengan regularisasi L2. Parameter $W$ dan $\mathbf{b}$ dicari dengan meminimalkan:
+
+$$\min_{W,\mathbf{b}} \; \frac{1}{2}\lVert W \rVert_2^2 \;+\; C \sum_{i=1}^{N} w_{y_i} \left( -\log P(y_i \mid \mathbf{x}_i) \right)$$
+
+dengan $C$ sebagai kebalikan kekuatan regularisasi dan $w_{y_i}$ sebagai bobot kelas (`class_weight`). Suku pertama (penalti L2) menjaga bobot tetap kecil agar model tidak terlalu menyesuaikan diri dengan data latih, sedangkan suku kedua mengukur kesalahan prediksi probabilitas.
+
 **Parameter yang digunakan:**
 
-```
-[Tuliskan parameter penting, contoh:]
-- C (regularization): 1.0
-- solver: 'lbfgs'
-- max_iter: 100
-```
+| Parameter | Nilai | Alasan |
+|---|---|---|
+| `penalty` | `l2` | Regularisasi untuk mengurangi overfitting |
+| `C` | 1.0 | Nilai default; nilai lebih kecil berarti regularisasi lebih kuat |
+| `solver` | `lbfgs` | Mendukung multinomial softmax dan efisien untuk data berukuran kecil-menengah |
+| `max_iter` | 1000 | Default (100) berisiko belum konvergen; model aktual konvergen pada 143 iterasi |
+| `class_weight` | `balanced` | Mengompensasi ketidakseimbangan kelas (Low ± 6%, Medium ± 37%, Critical ± 57%) |
+| `random_state` | 42 | Reproducibility |
+
+**Catatan:** Pada tahap ini baseline sengaja dilatih dengan parameter awal tanpa *hyperparameter tuning*, karena fungsinya sebagai pembanding dasar (*lower-bound benchmark*). Pengendalian overfitting dilakukan melalui regularisasi L2, dan tuning hyperparameter difokuskan pada Model 2 (Bab 6.2.4).
 
 #### 6.1.5 Hasil Awal **[O → P]**
 
-**[Tuliskan hasil awal pada validation set; evaluasi akhir pada test set dijelaskan di Bab 7]**
+Baseline dilatih dengan 96 fitur Color Histogram RGB dan dievaluasi pada validation set (133 citra). Test set tidak digunakan.
+
+| Metrik | Training | Validation |
+|---|---|---|
+| Accuracy | 0.660 | 0.444 |
+| Macro Precision | – | 0.383 |
+| Macro Recall | – | 0.384 |
+| Macro F1-Score | – | 0.364 |
+| Waktu training | 0.10 detik | – |
+| Waktu inferensi | – | 0.0009 detik |
+
+| Kelas | Precision | Recall | F1-Score | Support |
+|---|---|---|---|---|
+| Low | 0.08 | 0.22 | 0.12 | 9 |
+| Medium | 0.40 | 0.49 | 0.44 | 47 |
+| Critical | 0.67 | 0.44 | 0.53 | 77 |
+
+![Confusion Matrix Baseline](../reports/figures/baseline_confusion_matrix_val.png)
+
+**Analisis:**
+1. Akurasi training (0.660) jauh lebih tinggi daripada validation (0.444). Selisih sekitar 22 poin ini menunjukkan model tidak menggeneralisasi dengan baik pada data baru, sementara akurasi training sendiri pun tidak tinggi. Artinya fitur Color Histogram kurang informatif untuk membedakan tingkat keparahan.
+2. Kelas Low paling sulit diprediksi (F1 = 0.12; hanya 2 dari 9 citra terdeteksi benar) karena jumlahnya sangat sedikit (±6% data).
+3. Kesalahan terbesar terjadi pada pasangan Medium dan Critical: 28 citra Critical diprediksi Medium dan 16 citra Medium diprediksi Critical. Hal ini sesuai dengan inductive bias model, karena label keparahan ditentukan oleh rasio luas lubang, sedangkan Color Histogram hanya menangkap distribusi warna global dan tidak menangkap ukuran atau bentuk lubang.
+4. Hasil ini menjadi batas bawah (lower-bound benchmark). Model 2 dengan fitur HOG yang menangkap tepi dan tekstur diharapkan memberi peningkatan, terutama pada Macro F1 (0.364).
 
 ---
 
