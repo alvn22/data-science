@@ -607,27 +607,35 @@ Baseline dilatih dengan 96 fitur Color Histogram RGB dan dievaluasi pada validat
 
 #### 6.2.1 Deskripsi Model **[M]**
 
-**Nama Model:** [Nama model, misal: Random Forest / XGBoost]  
+**Nama Model:** Random Forest 
 **Teori Singkat:**  
-[Jelaskan bagaimana algoritma ini bekerja]
+**Random Forest** adalah algoritma *ensemble learning* berbasis metode *bagging* (*Bootstrap Aggregating*) yang menggabungkan sekumpulan pohon keputusan (*Decision Trees*) yang dilatih secara paralel dan independen. Setiap pohon dibangun menggunakan sampel data acak dengan pengembalian (*bootstrap sampling*) serta mempertimbangkan subset fitur secara acak pada setiap titik pemisahan simpul (*random feature subspace*). Keputusan akhir klasifikasi ditentukan berdasarkan mekanisme pemungutan suara mayoritas (*majority voting*) dari seluruh prediksi pohon individu di dalam *forest*.
 
 **Alasan Pemilihan:**  
-[Mengapa memilih model ini?]
+Data citra kerusakan jalan memiliki karakteristik visual yang kompleks—seperti perbedaan tekstur kasar aspal, bayangan pepohonan, pantulan genangan air, dan variasi kedalaman lubang—yang tidak dapat dipisahkan secara optimal oleh garis pemisah linear biasa. Random Forest dipilih karena mampu menangkap hubungan non-linear antar-fitur hasil ekstraksi citra (gradien tepian HOG dan distribusi warna RGB), tahan terhadap *overfitting* pada ukuran dataset menengah (665 citra dasar), serta memiliki fitur pembobotan kelas otomatis untuk menangani distribusi tingkat keparahan lubang jalan yang tidak seimbang.
 
 **Keunggulan:**
-
-- [Sebutkan keunggulan]
+- Mampu memodelkan pola batas keputusan (*decision boundary*) yang kompleks dan non-linear antar-fitur visual.
+- Lebih tangguh terhadap *overfitting* dan *noise* dibandingkan *Decision Tree* tunggal berkat mekanisme agregasi banyak pohon.
+- Tidak sensitif terhadap perbedaan skala fitur maupun keberadaan *outlier* pada data ekstraksi citra.
+- Menyediakan skor *feature importance* untuk menganalisis fitur tekstur atau warna mana yang paling berpengaruh dalam menentukan tingkat kerusakan jalan.
 
 **Kelemahan:**
-
-- [Sebutkan kelemahan]
+- Membutuhkan alokasi memori penyimpanan model dan waktu komputasi pelatihan yang lebih besar dibandingkan model linear sederhana (*Logistic Regression*).
+- Sifat model cenderung *black-box* (kurang interpretatif secara aturan tunggal) ketika jumlah pohon (*`n_estimators`*) yang digunakan cukup banyak.
+- Tidak memiliki kemampuan untuk melakukan ekstrapolasi pola di luar rentang nilai fitur yang pernah dipelajari pada data latih.
 
 #### 6.2.2 Hypothesis Space & Inductive Bias **[M]**
 
-- **Model family / arsitektur:** [misal: ensemble pohon keputusan]
-- **Hypothesis space:** [fungsi non-linear piecewise, interaksi fitur otomatis, dll.]
-- **Inductive bias / asumsi:** [misal: data tabular dengan struktur ambang/threshold]
-- **Perbandingan dengan baseline:** [apa yang bisa dipelajari model ini yang tidak bisa baseline?]
+- **Model family / arsitektur:** *Tree-based Ensemble Learning* (*Bagging* dari sekumpulan *Classification and Regression Trees* / CART).
+- **Hypothesis space:** Himpunan fungsi pemetaan non-linear bertingkat (*piecewise-constant functions*) yang terbentuk dari partisi ruang fitur berdimensi tinggi secara rekursif dan sejajar sumbu koordinat (*axis-aligned hyperrectangles*). Secara matematis dinyatakan sebagai gabungan suara mayoritas $T$ buah pohon keputusan:
+  $$H(x) = \text{mode}\{h_1(x), h_2(x), \dots, h_T(x)\}$$
+  yang mampu merepresentasikan interaksi fitur secara otomatis tanpa perlu rekayasa polinomial manual.
+- **Inductive bias / asumsi:** 
+   1. *Axis-Aligned Threshold Bias*: Mengasumsikan bahwa pemisahan kelas tingkat keparahan lubang dapat dicapai melalui serangkaian pengujian ambang batas (*threshold*) pada fitur individual secara hierarkis berdasarkan penurunan *Gini Impurity*.
+   2. *Variance-Reduction via Decorrelation*: Mengasumsikan bahwa menggabungkan banyak pohon yang tidak saling berkorelasi (melalui *bootstrap* baris dan pengacakan fitur pada tiap *split*) akan menekan varians prediksi dan menghasilkan generalisasi yang stabil.
+   3. *Local Neighborhood Smoothness*: Sampel citra yang jatuh pada simpul daun (*leaf node*) yang sama dianggap memiliki karakteristik keparahan kerusakan jalan yang serupa.
+- **Perbandingan dengan baseline:** Model *baseline* (*Logistic Regression*) hanya mampu mempelajari satu bidang pemisah linear (*hyperplane*) global yang menjumlahkan bobot fitur secara aditif, sehingga mudah terkecoh ketika bayangan gelap pada aspal mulus memiliki nilai intensitas piksel yang mirip dengan lubang jalan. Sebaliknya, **Random Forest** mampu mempelajari **interaksi kondisional non-linear antar-fitur** (misalnya: mengombinasikan intensitas warna gelap *sekaligus* perubahan gradien tepian tajam pada fitur HOG) untuk membedakan secara akurat antara bayangan aspal biasa, lubang ringan (*Low*), sedang (*Medium*), maupun parah (*Critical*).
 
 #### 6.2.3 Implementasi (Ringkas) **[M]**
 
